@@ -1,0 +1,327 @@
+<header class="header-area header-sticky">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav class="main-nav">
+                    <a href="{{ path('app_homepage') }}" class="logo">
+                        <img src="{{ asset('images/logo-esprit.png') }}" alt="Logo Esprit" style="height:100px; width: 150px;">
+                    </a>
+                    <ul class="nav">
+                        <li><a href="{{ path('app_homepage') }}" class="active">Accueil</a></li>
+                        <li><a href="{{ path('app_page_event') }}">Événements</a></li>
+                        <li class="scroll-to-section"><a href="{{ path('app_page_club') }}">Clubs</a></li>
+                        <li class="scroll-to-section"><a href="#">Cours</a></li>
+                        <li><a href="{{ path('app_page_contact') }}">Contact</a></li>
+
+                        <!-- Display either Login or Logout depending on authentication status -->
+                        {% if app.user %}
+                            <li>
+                                <form action="{{ path('app_logout') }}" method="post">
+                                    <button type="submit" class="btn btn-outline-danger">Logout</button>
+                                </form>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="#" data-toggle="modal" data-target="#authModal">Se Connecter</a>
+                            </li>
+                        {% endif %}
+                        {% if app.user %}
+                            <p>{{ app.user.prenom }} {{ app.user.nom }}  </p>
+                        {% endif %}
+
+                    </ul>
+                    <a class="menu-trigger">
+                        <span>Menu</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div id="authModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content no-background">
+            <div class="modal-body">
+                <div class="container1" id="container1">
+                    {% if form is defined %}
+                        <div class="form-container1 sign-up-container1">
+                            <form method="post">
+                                <h1>Créer un Compte</h1>
+                                <div class="col-12 mb-1">
+                                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Votre Prénom'}}) }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    {{ form_widget(form.nom, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Votre Nom'}}) }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    {{ form_widget(form.email, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Votre Email'}}) }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    {{ form_widget(form.telephone, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Numéro de téléphone'}}) }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    {{ form_widget(form.birthday, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Date de Naissance'}}) }}
+                                </div>
+                                <div class="col-12 mb-3">
+                                    {{ form_widget(form.password, {'attr': {'class': 'form-control no-margin', 'placeholder': 'Mot de Passe'}}) }}
+                                </div>
+                                <button type="submit">S'inscrire</button>
+                            </form>
+
+                        </div>
+                    {% endif %}
+
+
+
+                    <div class="form-container1 sign-in-container1">
+                        {% if not app.user %}
+                            <form method="post">
+                                {% if error is defined and error %}
+                                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                                {% endif %}
+
+                                {% if app.user %}
+                                    <div class="mb-3">
+                                        You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                                    </div>
+                                {% endif %}
+
+                                <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+                                <label for="inputEmail">Email</label>
+                                <input type="email" value="{{ last_username | default('')}}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+                                <label for="inputPassword">Password</label>
+                                <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+
+                                <input type="hidden" name="_csrf_token"
+                                       value="{{ csrf_token('authenticate') }}"
+                                >
+
+                                <button class="btn btn-lg btn-danger" type="submit">
+                                    Sign in
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <div class="overlay-container1">
+                        <div class="overlay">
+                            <div class="overlay-panel overlay-left">
+                                <img src="{{ asset('images/logo-esprit.png') }}">
+                                <h3 style="color: #737778"><strong>ESPRIT</strong> ... Se Former autrement pour une nouvelle génération d'ingénieurs.</h3>
+                                <br><br>
+                                <button class="ghost" id="signIn">Se Connecter</button>
+                            </div>
+                            <!-- Overlay pour Sign Up -->
+                            <div class="overlay-panel overlay-right">
+                                <img src="{{ asset('images/logo-esprit.png') }}">
+                                <h3 style="color: #737778"><strong>ESPRIT</strong> ... Se Former autrement pour une nouvelle génération d'ingénieurs.</h3>
+                                <br><br>
+                                <button class="ghost" id="signUp">S'inscrire</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container1 = document.getElementById('container1');
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+
+        if (signUpButton && signInButton && container1) {
+            signUpButton.addEventListener('click', () => {
+                container1.classList.add('right-panel-active');
+            });
+
+            signInButton.addEventListener('click', () => {
+                container1.classList.remove('right-panel-active');
+            });
+        }
+    });
+</script>
+
+<style>
+    :root {
+        --primary-color: #a11515;
+        --secondary-color: #373636;
+        --overlay-color: rgb(67, 66, 66);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .modal-content.no-background {
+        background: transparent; /* Remove the white background */
+        border: none; /* Remove any border */
+        box-shadow: none; /* Remove box shadow */
+    }
+
+    .container1 {
+        background: transparent;
+        border-radius:24px;
+        box-shadow: none;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        max-width: 900px;
+        min-height: 600px;
+    }
+
+    .container1 .form-container1 {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        transition: all 0.6s ease-in-out;
+    }
+
+    .container1 .sign-in-container1 {
+        left: 0;
+        width: 50%;
+        z-index: 2;
+    }
+
+    .container1.right-panel-active .sign-in-container1 {
+        transform: translateX(100%);
+    }
+
+    .container1 .sign-up-container1 {
+        left: 0;
+        width: 50%;
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .container1.right-panel-active .sign-up-container1 {
+        transform: translateX(100%);
+        opacity: 1;
+        z-index: 5;
+        animation: show 0.6s;
+    }
+
+    @keyframes show {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .container1 form {
+        background: rgba(255, 255, 255, 0.9); /* Slightly transparent background to maintain form readability */
+        display: flex;
+        flex-direction: column;
+        padding: 0 50px;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .container1 .form-container1 input {
+        background: #eee;
+        border: none;
+        padding: 12px 15px;
+        margin: 8px 0;
+        width: 100%;
+    }
+
+    .container1 button {
+        border-radius: 20px;
+        border: 1px solid var(--primary-color);
+        background: var(--primary-color);
+        color: #fff;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 12px 45px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: transform 80ms ease-in;
+        cursor: pointer;
+    }
+
+    .container1 button:active {
+        transform: scale(0.95);
+    }
+
+    .container1 button:focus {
+        outline: none;
+    }
+
+    .container1 .overlay-container1 {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+        transition: transform 0.6s ease-in-out;
+        z-index: 100;
+    }
+
+    .container1.right-panel-active .overlay-container1 {
+        transform: translateX(-100%);
+    }
+
+    .container1 .overlay {
+        background: var(--secondary-color);
+        background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        color: #fff;
+        position: relative;
+        left: -100%;
+        height: 100%;
+        width: 200%;
+        transform: translateX(0);
+        transition: transform 0.6s ease-in-out;
+    }
+
+    .container1.right-panel-active .overlay {
+        transform: translateX(50%);
+    }
+
+    .container1 .overlay-panel {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0 40px;
+        text-align: center;
+        top: 0;
+        height: 100%;
+        width: 50%;
+        transform: translateX(0);
+        transition: transform 0.6s ease-in-out;
+    }
+
+    .container1 .overlay-left {
+        transform: translateX(-20%);
+    }
+
+    .container1.right-panel-active .overlay-left {
+        transform: translateX(0);
+    }
+
+    .container1 .overlay-right {
+        right: 0;
+        transform: translateX(0);
+    }
+
+    .container1.right-panel-active .overlay-right {
+        transform: translateX(20%);
+    }
+
+    .container1 .forgot {
+        margin-top: 10px;
+    }
+
+    .container1 .forgot:hover {
+        text-decoration: underline;
+    }
+</style>
